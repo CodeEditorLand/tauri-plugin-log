@@ -1,40 +1,40 @@
 import { type UnlistenFn } from "@tauri-apps/api/event";
 export type LogOptions = {
-	file?: string;
-	line?: number;
-	keyValues?: Record<string, string | undefined>;
+    file?: string;
+    line?: number;
+    keyValues?: Record<string, string | undefined>;
 };
 declare enum LogLevel {
-	/**
-	 * The "trace" level.
-	 *
-	 * Designates very low priority, often extremely verbose, information.
-	 */
-	Trace = 1,
-	/**
-	 * The "debug" level.
-	 *
-	 * Designates lower priority information.
-	 */
-	Debug = 2,
-	/**
-	 * The "info" level.
-	 *
-	 * Designates useful information.
-	 */
-	Info = 3,
-	/**
-	 * The "warn" level.
-	 *
-	 * Designates hazardous situations.
-	 */
-	Warn = 4,
-	/**
-	 * The "error" level.
-	 *
-	 * Designates very serious errors.
-	 */
-	Error = 5,
+    /**
+     * The "trace" level.
+     *
+     * Designates very low priority, often extremely verbose, information.
+     */
+    Trace = 1,
+    /**
+     * The "debug" level.
+     *
+     * Designates lower priority information.
+     */
+    Debug = 2,
+    /**
+     * The "info" level.
+     *
+     * Designates useful information.
+     */
+    Info = 3,
+    /**
+     * The "warn" level.
+     *
+     * Designates hazardous situations.
+     */
+    Warn = 4,
+    /**
+     * The "error" level.
+     *
+     * Designates very serious errors.
+     */
+    Error = 5
 }
 /**
  * Logs a message at the error level.
@@ -52,10 +52,7 @@ declare enum LogLevel {
  * error(`Error: ${err_info} on port ${port}`);
  * ```
  */
-export declare function error(
-	message: string,
-	options?: LogOptions,
-): Promise<void>;
+export declare function error(message: string, options?: LogOptions): Promise<void>;
 /**
  * Logs a message at the warn level.
  *
@@ -71,10 +68,7 @@ export declare function error(
  * warn(`Warning! {warn_description}!`);
  * ```
  */
-export declare function warn(
-	message: string,
-	options?: LogOptions,
-): Promise<void>;
+export declare function warn(message: string, options?: LogOptions): Promise<void>;
 /**
  * Logs a message at the info level.
  *
@@ -90,10 +84,7 @@ export declare function warn(
  * info(`Connected to port {conn_info.port} at {conn_info.speed} Mb/s`);
  * ```
  */
-export declare function info(
-	message: string,
-	options?: LogOptions,
-): Promise<void>;
+export declare function info(message: string, options?: LogOptions): Promise<void>;
 /**
  * Logs a message at the debug level.
  *
@@ -109,10 +100,7 @@ export declare function info(
  * debug(`New position: x: {pos.x}, y: {pos.y}`);
  * ```
  */
-export declare function debug(
-	message: string,
-	options?: LogOptions,
-): Promise<void>;
+export declare function debug(message: string, options?: LogOptions): Promise<void>;
 /**
  * Logs a message at the trace level.
  *
@@ -128,13 +116,10 @@ export declare function debug(
  * trace(`Position is: x: {pos.x}, y: {pos.y}`);
  * ```
  */
-export declare function trace(
-	message: string,
-	options?: LogOptions,
-): Promise<void>;
+export declare function trace(message: string, options?: LogOptions): Promise<void>;
 interface RecordPayload {
-	level: LogLevel;
-	message: string;
+    level: LogLevel;
+    message: string;
 }
 type LoggerFn = (fn: RecordPayload) => void;
 /**

@@ -1,70 +1,58 @@
-import { invoke } from "@tauri-apps/api/tauri";
-import { listen } from "@tauri-apps/api/event";
+import { invoke } from '@tauri-apps/api/tauri';
+import { listen } from '@tauri-apps/api/event';
 
 var LogLevel;
 (function (LogLevel) {
-	/**
-	 * The "trace" level.
-	 *
-	 * Designates very low priority, often extremely verbose, information.
-	 */
-	LogLevel[(LogLevel["Trace"] = 1)] = "Trace";
-	/**
-	 * The "debug" level.
-	 *
-	 * Designates lower priority information.
-	 */
-	LogLevel[(LogLevel["Debug"] = 2)] = "Debug";
-	/**
-	 * The "info" level.
-	 *
-	 * Designates useful information.
-	 */
-	LogLevel[(LogLevel["Info"] = 3)] = "Info";
-	/**
-	 * The "warn" level.
-	 *
-	 * Designates hazardous situations.
-	 */
-	LogLevel[(LogLevel["Warn"] = 4)] = "Warn";
-	/**
-	 * The "error" level.
-	 *
-	 * Designates very serious errors.
-	 */
-	LogLevel[(LogLevel["Error"] = 5)] = "Error";
+    /**
+     * The "trace" level.
+     *
+     * Designates very low priority, often extremely verbose, information.
+     */
+    LogLevel[LogLevel["Trace"] = 1] = "Trace";
+    /**
+     * The "debug" level.
+     *
+     * Designates lower priority information.
+     */
+    LogLevel[LogLevel["Debug"] = 2] = "Debug";
+    /**
+     * The "info" level.
+     *
+     * Designates useful information.
+     */
+    LogLevel[LogLevel["Info"] = 3] = "Info";
+    /**
+     * The "warn" level.
+     *
+     * Designates hazardous situations.
+     */
+    LogLevel[LogLevel["Warn"] = 4] = "Warn";
+    /**
+     * The "error" level.
+     *
+     * Designates very serious errors.
+     */
+    LogLevel[LogLevel["Error"] = 5] = "Error";
 })(LogLevel || (LogLevel = {}));
 async function log(level, message, options) {
-	var _a, _b;
-	const traces =
-		(_a = new Error().stack) === null || _a === void 0
-			? void 0
-			: _a.split("\n").map((line) => line.split("@"));
-	const filtered =
-		traces === null || traces === void 0
-			? void 0
-			: traces.filter(([name, location]) => {
-					return name.length > 0 && location !== "[native code]";
-				});
-	const { file, line, keyValues } =
-		options !== null && options !== void 0 ? options : {};
-	let location =
-		(_b =
-			filtered === null || filtered === void 0 ? void 0 : filtered[0]) ===
-			null || _b === void 0
-			? void 0
-			: _b.filter((v) => v.length > 0).join("@");
-	if (location === "Error") {
-		location = "webview::unknown";
-	}
-	await invoke("plugin:log|log", {
-		level,
-		message,
-		location,
-		file,
-		line,
-		keyValues,
-	});
+    var _a, _b;
+    const traces = (_a = new Error().stack) === null || _a === void 0 ? void 0 : _a.split("\n").map((line) => line.split("@"));
+    const filtered = traces === null || traces === void 0 ? void 0 : traces.filter(([name, location]) => {
+        return name.length > 0 && location !== "[native code]";
+    });
+    const { file, line, keyValues } = options !== null && options !== void 0 ? options : {};
+    let location = (_b = filtered === null || filtered === void 0 ? void 0 : filtered[0]) === null || _b === void 0 ? void 0 : _b.filter((v) => v.length > 0).join("@");
+    if (location === "Error") {
+        location = "webview::unknown";
+    }
+    await invoke("plugin:log|log", {
+        level,
+        message,
+        location,
+        file,
+        line,
+        keyValues,
+    });
 }
 /**
  * Logs a message at the error level.
@@ -83,7 +71,7 @@ async function log(level, message, options) {
  * ```
  */
 async function error(message, options) {
-	await log(LogLevel.Error, message, options);
+    await log(LogLevel.Error, message, options);
 }
 /**
  * Logs a message at the warn level.
@@ -101,7 +89,7 @@ async function error(message, options) {
  * ```
  */
 async function warn(message, options) {
-	await log(LogLevel.Warn, message, options);
+    await log(LogLevel.Warn, message, options);
 }
 /**
  * Logs a message at the info level.
@@ -119,7 +107,7 @@ async function warn(message, options) {
  * ```
  */
 async function info(message, options) {
-	await log(LogLevel.Info, message, options);
+    await log(LogLevel.Info, message, options);
 }
 /**
  * Logs a message at the debug level.
@@ -137,7 +125,7 @@ async function info(message, options) {
  * ```
  */
 async function debug(message, options) {
-	await log(LogLevel.Debug, message, options);
+    await log(LogLevel.Debug, message, options);
 }
 /**
  * Logs a message at the trace level.
@@ -155,7 +143,7 @@ async function debug(message, options) {
  * ```
  */
 async function trace(message, options) {
-	await log(LogLevel.Trace, message, options);
+    await log(LogLevel.Trace, message, options);
 }
 /**
  * Attaches a listener for the log, and calls the passed function for each log entry.
@@ -164,18 +152,16 @@ async function trace(message, options) {
  * @returns a function to cancel the listener.
  */
 async function attachLogger(fn) {
-	return await listen("log://log", (event) => {
-		const { level } = event.payload;
-		let { message } = event.payload;
-		// Strip ANSI escape codes
-		message = message.replace(
-			// TODO: Investigate security/detect-unsafe-regex
-			// eslint-disable-next-line no-control-regex
-			/[\u001b\u009b][[()#;?]*(?:[0-9]{1,4}(?:;[0-9]{0,4})*)?[0-9A-ORZcf-nqry=><]/g,
-			"",
-		);
-		fn({ message, level });
-	});
+    return await listen("log://log", (event) => {
+        const { level } = event.payload;
+        let { message } = event.payload;
+        // Strip ANSI escape codes
+        message = message.replace(
+        // TODO: Investigate security/detect-unsafe-regex
+        // eslint-disable-next-line no-control-regex
+        /[\u001b\u009b][[()#;?]*(?:[0-9]{1,4}(?:;[0-9]{0,4})*)?[0-9A-ORZcf-nqry=><]/g, "");
+        fn({ message, level });
+    });
 }
 /**
  * Attaches a listener that writes log entries to the console as they come in.
@@ -183,28 +169,28 @@ async function attachLogger(fn) {
  * @returns a function to cancel the listener.
  */
 async function attachConsole() {
-	return attachLogger(({ level, message }) => {
-		switch (level) {
-			case LogLevel.Trace:
-				console.log(message);
-				break;
-			case LogLevel.Debug:
-				console.debug(message);
-				break;
-			case LogLevel.Info:
-				console.info(message);
-				break;
-			case LogLevel.Warn:
-				console.warn(message);
-				break;
-			case LogLevel.Error:
-				console.error(message);
-				break;
-			default:
-				// eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-				throw new Error(`unknown log level ${level}`);
-		}
-	});
+    return attachLogger(({ level, message }) => {
+        switch (level) {
+            case LogLevel.Trace:
+                console.log(message);
+                break;
+            case LogLevel.Debug:
+                console.debug(message);
+                break;
+            case LogLevel.Info:
+                console.info(message);
+                break;
+            case LogLevel.Warn:
+                console.warn(message);
+                break;
+            case LogLevel.Error:
+                console.error(message);
+                break;
+            default:
+                // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+                throw new Error(`unknown log level ${level}`);
+        }
+    });
 }
 
 export { attachConsole, attachLogger, debug, error, info, trace, warn };
