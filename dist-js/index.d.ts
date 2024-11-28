@@ -151,4 +151,5 @@ export declare function attachLogger(fn: LoggerFn): Promise<UnlistenFn>;
  * @returns a function to cancel the listener.
  */
 export declare function attachConsole(): Promise<UnlistenFn>;
+
 export {};
