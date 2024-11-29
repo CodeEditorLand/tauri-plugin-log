@@ -3,7 +3,9 @@ import { invoke } from "@tauri-apps/api/tauri";
 
 export type LogOptions = {
 	file?: string;
+
 	line?: number;
+
 	keyValues?: Record<string, string | undefined>;
 };
 
@@ -184,6 +186,7 @@ export async function trace(
 
 interface RecordPayload {
 	level: LogLevel;
+
 	message: string;
 }
 
@@ -208,6 +211,7 @@ export async function attachLogger(fn: LoggerFn): Promise<UnlistenFn> {
 			/[\u001b\u009b][[()#;?]*(?:[0-9]{1,4}(?:;[0-9]{0,4})*)?[0-9A-ORZcf-nqry=><]/g,
 			"",
 		);
+
 		fn({ message, level });
 	});
 }

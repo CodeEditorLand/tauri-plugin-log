@@ -2,7 +2,9 @@ import { type UnlistenFn } from "@tauri-apps/api/event";
 
 export type LogOptions = {
 	file?: string;
+
 	line?: number;
+
 	keyValues?: Record<string, string | undefined>;
 };
 declare enum LogLevel {
@@ -135,6 +137,7 @@ export declare function trace(
 ): Promise<void>;
 interface RecordPayload {
 	level: LogLevel;
+
 	message: string;
 }
 type LoggerFn = (fn: RecordPayload) => void;
