@@ -146,14 +146,19 @@ fn log(
 	key_values:Option<HashMap<String, String>>,
 ) {
 	let location = location.unwrap_or("webview");
+
 	let mut builder = RecordBuilder::new();
+
 	builder.level(level.into()).target(location).file(file).line(line);
 
 	let key_values = key_values.unwrap_or_default();
+
 	let mut kv = HashMap::new();
+
 	for (k, v) in key_values.iter() {
 		kv.insert(k.as_str(), v.as_str());
 	}
+
 	builder.key_values(&kv);
 
 	logger().log(&builder.args(format_args!("{message}")).build());
@@ -173,6 +178,7 @@ impl Default for Builder {
 		let format =
 			time::format_description::parse("[[[year]-[month]-[day]][[[hour]:[minute]:[second]]")
 				.unwrap();
+
 		let dispatch = fern::Dispatch::new().format(move |out, message, record| {
 			out.finish(format_args!(
 				"{}[{}][{}] {}",
@@ -182,6 +188,7 @@ impl Default for Builder {
 				message
 			))
 		});
+
 		Self {
 			dispatch,
 			rotation_strategy:DEFAULT_ROTATION_STRATEGY,
@@ -198,6 +205,7 @@ impl Builder {
 
 	pub fn rotation_strategy(mut self, rotation_strategy:RotationStrategy) -> Self {
 		self.rotation_strategy = rotation_strategy;
+
 		self
 	}
 
@@ -207,6 +215,7 @@ impl Builder {
 		let format =
 			time::format_description::parse("[[[year]-[month]-[day]][[[hour]:[minute]:[second]]")
 				.unwrap();
+
 		self.dispatch = fern::Dispatch::new().format(move |out, message, record| {
 			out.finish(format_args!(
 				"{}[{}][{}] {}",
@@ -216,11 +225,13 @@ impl Builder {
 				message
 			))
 		});
+
 		self
 	}
 
 	pub fn max_file_size(mut self, max_file_size:u128) -> Self {
 		self.max_file_size = max_file_size;
+
 		self
 	}
 
@@ -228,16 +239,19 @@ impl Builder {
 	where
 		F: Fn(FormatCallback, &Arguments, &Record) + Sync + Send + 'static, {
 		self.dispatch = self.dispatch.format(formatter);
+
 		self
 	}
 
 	pub fn level(mut self, level_filter:impl Into<LevelFilter>) -> Self {
 		self.dispatch = self.dispatch.level(level_filter.into());
+
 		self
 	}
 
 	pub fn level_for(mut self, module:impl Into<Cow<'static, str>>, level:LevelFilter) -> Self {
 		self.dispatch = self.dispatch.level_for(module, level);
+
 		self
 	}
 
@@ -245,16 +259,19 @@ impl Builder {
 	where
 		F: Fn(&log::Metadata) -> bool + Send + Sync + 'static, {
 		self.dispatch = self.dispatch.filter(filter);
+
 		self
 	}
 
 	pub fn target(mut self, target:LogTarget) -> Self {
 		self.targets.push(target);
+
 		self
 	}
 
 	pub fn targets(mut self, targets:impl IntoIterator<Item = LogTarget>) -> Self {
 		self.targets = Vec::from_iter(targets);
+
 		self
 	}
 
@@ -278,6 +295,7 @@ impl Builder {
 	/// ```
 	pub fn log_name<S:Into<String>>(mut self, log_name:S) -> Self {
 		self.log_name = Some(log_name.into());
+
 		self
 	}
 
@@ -288,6 +306,7 @@ impl Builder {
 				.unwrap();
 
 		let timezone_strategy = self.timezone_strategy.clone();
+
 		self.format(move |out, message, record| {
 			out.finish(format_args!(
 				"{}[{}][{}] {}",
@@ -330,6 +349,7 @@ impl Builder {
 								.path_resolver()
 								.app_log_dir()
 								.ok_or("app_log_dir is None")?;
+
 							if !path.exists() {
 								fs::create_dir_all(&path)?;
 							}
@@ -351,7 +371,9 @@ impl Builder {
 									message:record.args().to_string(),
 									level:record.level().into(),
 								};
+
 								let app_handle = app_handle.clone();
+
 								tauri::async_runtime::spawn(async move {
 									let _ = app_handle.emit_all("log://log", payload);
 								});
@@ -379,6 +401,7 @@ fn get_log_file_path(
 
 	if path.exists() {
 		let log_size = File::open(&path)?.metadata()?.len() as u128;
+
 		if log_size > max_file_size {
 			match rotation_strategy {
 				RotationStrategy::KeepAll => {
@@ -389,16 +412,20 @@ fn get_log_file_path(
 							"[year]-[month]-[day]_[hour]-[minute]-[second]"
 						)?)?,
 					));
+
 					if to.is_file() {
 						// designated rotated log file name already exists
 						// highly unlikely but defensively handle anyway by adding .bak to filename
 						let mut to_bak = to.clone();
+
 						to_bak.set_file_name(format!(
 							"{}.bak",
 							to_bak.file_name().map(|n| n.to_string_lossy()).unwrap_or_default()
 						));
+
 						fs::rename(&to, to_bak)?;
 					}
+
 					fs::rename(&path, to)?;
 				},
 				RotationStrategy::KeepOne => {
