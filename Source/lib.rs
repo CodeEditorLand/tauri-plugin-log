@@ -13,13 +13,13 @@ use std::{
 
 pub use fern;
 use fern::FormatCallback;
-use log::{logger, LevelFilter, Record, RecordBuilder};
+use log::{LevelFilter, Record, RecordBuilder, logger};
 use serde::Serialize;
 use serde_repr::{Deserialize_repr, Serialize_repr};
 use tauri::{
-	plugin::{self, TauriPlugin},
 	Manager,
 	Runtime,
+	plugin::{self, TauriPlugin},
 };
 use time::OffsetDateTime;
 
